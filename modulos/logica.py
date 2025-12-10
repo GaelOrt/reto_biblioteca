@@ -40,6 +40,7 @@ def prestar_libro(biblioteca: Biblioteca):
     usuario_find = usuarios[usuario_index - 1]
 
     biblioteca.prestar_libro(libro_find.id_libro, usuario_find.id_usuario)
+    libro_find.marcar_prestado()
 
 
 def devolver_libro(biblioteca: Biblioteca):
