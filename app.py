@@ -20,6 +20,10 @@ def main():
     """
     Función raiz de la App
     """
+    b = obtener_biblioteca()
+    gjson = GestorPersistencia(EstrategiaJSON())
+    gpickle = GestorPersistencia(EstrategiaPickle())
+
     while True:
         print('\n')
         match mostrar_menu(
@@ -34,23 +38,23 @@ def main():
              '9. Cargar  (pickle)',
              '0. Salir']):
             case 1:
-                listar_libros()
+                b.listar_libros()
             case 2:
-                agregar_libro()
+                agregar_libro(b)
             case 3:
-                agregar_usurio()
+                agregar_usuario(b)
             case 4:
-                prestar_libro()
+                prestar_libro(b)
             case 5:
-                devolver_libro()
+                devolver_libro(b)
             case 6:
-                guardar_json()
+                gjson.guardar(b)
             case 7:
-                guardar_pickle()
+                gpickle.guardar(b)
             case 8:
-                cargar_json()
+                gjson.cargar()
             case 9:
-                cargar_pickle()
+                gpickle.cargar()
             case 0:
                 print('Saliendo...')
                 break

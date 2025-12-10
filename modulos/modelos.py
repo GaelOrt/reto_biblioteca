@@ -17,6 +17,10 @@ class Usuario:
         self._nombre = nombre
         self._tipo = tipo
 
+    @property
+    def id_usuario(self):
+        return self._id_usuario
+
     def __str__(self):
         """
         Se muestra el usuario
@@ -45,6 +49,10 @@ class Libro:
         self._autor = autor
         self._anio = anio
         self._disponible = True
+
+    @property
+    def id_libro(self):
+        return self._id_libro
 
     def marcar_prestado(self):
         """
@@ -89,12 +97,29 @@ class Prestamo:
         self._fecha_fin = None
         self._devuelto = False
 
+    @property
+    def id_prestamo(self):
+        return self._id_prestamo
+
+    @property
+    def id_libro(self):
+        return self._id_libro
+
     def marcar_devuelto(self):
         """
         Se ha devuelto el préstamo
         """
         self._devuelto = True
         self._fecha_fin = datetime.now()
+
+    def __str__(self):
+        """
+        Se muestra el prestamo
+
+        Returns:
+        list: Texto con los datos del prestamo
+        """
+        return f'Id Libro: {self._id_libro}, Id Usuario: {self._id_usuario}, Fecha Inicio: {self._fecha_inicio}, Fecha Fin: {self._fecha_fin}, Devuelto: {self._devuelto}'
 
 
 class Biblioteca:
@@ -111,7 +136,11 @@ class Biblioteca:
         if libros is None:
             libros = []
         self._libros = libros
+        if usuarios is None:
+            usuarios = []
         self._usuarios = usuarios
+        if prestamos is None:
+            prestamos = []
         self._prestamos = prestamos
 
     def registrar_libro(self, titulo, autor, anio):
@@ -126,6 +155,7 @@ class Biblioteca:
         libro = Libro(titulo, autor, anio, len(self._libros))
 
         self._libros.append(libro)
+        return libro
 
     def registrar_usuario(self, nombre, tipo):
         """
@@ -138,16 +168,72 @@ class Biblioteca:
         usuario = Usuario(nombre, tipo, len(self._usuarios))
 
         self._usuarios.append(usuario)
+        return usuario
 
     def prestar_libro(self, id_libro, id_usuario):
         """
-        Se prestar el libro
+        Se presta el libro
 
         Args:
-        id_libro (str): titulo del libro
-        autor (str): Nombre del autor
-        anio (int): Año de salida
+        id_libro (str): Id del libro
+        id_usuario (str): Id del usuario
         """
-        libro = Libro(titulo, autor, anio, len(self._libros))
+        prestamo = Prestamo(id_libro, id_usuario)
 
-        self._libros.append(libro)
+        self._prestamos.append(prestamo)
+        print(f'Se ha prestado el libro al usuario: {prestamo}')
+
+    def devolver_libro(self, id_prestamo):
+        """
+        Se devuelve el libro
+
+        Args:
+        id_prestamo (str): Id del préstamo
+        """
+        id_li = None
+        for prestamo in self._prestamos:
+            if prestamo.id_prestamo == id_prestamo:
+                id_li = prestamo.id_libro
+                prestamo.marcar_devuelto()
+
+        if id_li is None:
+            print('No se ha encontrado el préstamo')
+            return
+
+        for libro in self._libros:
+            if libro.id_libro == id_li:
+                libro.marcar_devuelto()
+        print(f'Se ha ha devuelto el prestamo')
+
+    def listar_libros(self):
+        if not self._libros:
+            print('No hay libros almacenados')
+            return None
+
+        print('Libros:')
+        for indx, l in enumerate(self._libros):
+            print(f'{indx + 1}. {l}')
+        return self._libros
+
+    def listar_usuarios(self):
+        if not self._usuarios:
+            print('No hay usuarios almacenados')
+            return None
+
+        print('Usuarios:')
+        for indx, u in enumerate(self._usuarios):
+            print(f'{indx + 1}. {u}')
+        return self._usuarios
+
+    def listar_prestamos(self):
+        if not self._prestamos:
+            print('No hay prestamos almacenados')
+            return None
+
+        print('Prestamos:')
+        for indx, p in enumerate(self._prestamos):
+            print(f'{indx + 1}. {p}')
+        return self._prestamos
+
+    def to_dict(self):
+        return
