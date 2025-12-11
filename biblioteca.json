@@ -1,0 +1,31 @@
+{
+  "_libros": [
+    {
+      "_id_libro": "L001",
+      "_titulo": "dsa",
+      "_autor": "das",
+      "_anio": 23,
+      "_disponible": false
+    },
+    {
+      "_id_libro": "L002",
+      "_titulo": "dsa",
+      "_autor": "das",
+      "_anio": 23,
+      "_disponible": true
+    }
+  ],
+  "_usuarios": [
+    {
+      "_id_usuario": "U001",
+      "_nombre": "das",
+      "_tipo": "ads"
+    },
+    {
+      "_id_usuario": "U002",
+      "_nombre": "dea",
+      "_tipo": "dsa"
+    }
+  ],
+  "_prestamos": []
+}

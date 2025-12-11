@@ -27,9 +27,15 @@ class EstrategiaPersistencia(ABC):
 
 class EstrategiaJSON(EstrategiaPersistencia):
     def guardar(self, biblioteca):
+        """
+         Función para guardar la biblioteca en JSON.
+
+         Args:
+         biblioteca (Biblioteca): Objeto con libros, usuarios y prestamos.
+         """
         try:
             with open("biblioteca.json", "w", encoding="utf-8") as f:
-                json.dump(biblioteca.to_dict(), f, indent=4, ensure_ascii=False)
+                json.dump(biblioteca, f, indent=4, ensure_ascii=False, cls=MiEncoder)
 
         except FileNotFoundError:
             print("El archivo no existe.")
@@ -38,24 +44,37 @@ class EstrategiaJSON(EstrategiaPersistencia):
             print("No tienes permiso para leer este archivo.")
 
     def cargar(self):
+        """
+         Función para cargar la biblioteca del JSON.
+         """
         try:
             with open("biblioteca.json") as f:
-                datos = json.load(f)
+                diccionario = json.load(f, object_hook=decodificar_biblioteca)
 
-            return datos
+            return diccionario
 
         except FileNotFoundError:
             print("El archivo no existe.")
 
         except PermissionError:
             print("No tienes permiso para leer este archivo.")
+
+        except json.JSONDecodeError as e:
+            print(f"JSON mal formado: {e}")
 
 
 class EstrategiaPickle(EstrategiaPersistencia):
     def guardar(self, biblioteca):
+        """
+         Función para guardar la biblioteca en JPickle.
+
+         Args:
+         biblioteca (Biblioteca): Objeto con libros, usuarios y prestamos.
+         """
         try:
             with open("biblioteca.pkl", "wb") as f:
-                pickle.dump(biblioteca.__dict__, f)
+                # pickle.dump(biblioteca, f, cls=MiEncoder)
+                pass
 
         except FileNotFoundError:
             print("El archivo no existe.")
@@ -64,16 +83,73 @@ class EstrategiaPickle(EstrategiaPersistencia):
             print("No tienes permiso para leer este archivo.")
 
     def cargar(self):
+        """
+         Función para cargar la biblioteca del JPickle.
+         """
         try:
             with open("biblioteca.pkl", "rb") as f:
-                datos = pickle.load(f)
+                # diccionario = pickle.load(f, object_hook=decodificar_biblioteca)
+                pass
 
-            return datos
+            # return diccionario
         except FileNotFoundError:
             print("El archivo no existe.")
 
         except PermissionError:
             print("No tienes permiso para leer este archivo.")
+
+        except pickle.UnpicklingError:
+            print("Archivo dañado o corrupto.")
+
+        except EOFError:
+            print("Archivo incompleto o vacio.")
+
+
+import json
+from datetime import datetime
+
+
+# Codificador
+class MiEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, datetime):
+            return obj.isoformat()
+
+        if isinstance(obj, Biblioteca):
+            return {
+                '_libros': obj.libros,
+                '_usuarios': obj.usuarios,
+                '_prestamos': obj.prestamos
+            }
+
+        if isinstance(obj, (Libro, Usuario, Prestamo)):
+            return obj.__dict__
+
+        return super().default(obj)
+
+
+# Decodificador
+def decodificar_biblioteca(dic):
+    if "_id_prestamo" in dic:
+        return Prestamo(dic["_id_libro"], dic["_id_usuario"], dic['_id_prestamo'], dic['_fecha_inicio'],
+                        dic['_fecha_fin'], dic['_devuelto'])
+
+    elif "_id_usuario" in dic:
+        return Usuario(dic["_nombre"], dic['_tipo'], dic['_id_usuario'])
+
+    elif "_titulo" in dic:
+        return Libro(
+            dic["_titulo"],
+            dic["_autor"],
+            dic["_anio"],
+            dic['_id_libro'],
+            dic['_disponible']
+        )
+
+    elif "_libros" in dic and "_usuarios" in dic:
+        return Biblioteca(dic['_libros'], dic['_usuarios'], dic['_prestamos'])
+
+    return dic
 
 
 if __name__ == '__main__':

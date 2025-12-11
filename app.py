@@ -52,9 +52,9 @@ def main():
             case 7:
                 gpickle.guardar(b)
             case 8:
-                gjson.cargar()
+                b = gjson.cargar()
             case 9:
-                gpickle.cargar()
+                b = gpickle.cargar()
             case 0:
                 print('Saliendo...')
                 break

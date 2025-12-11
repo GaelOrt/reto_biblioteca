@@ -12,8 +12,11 @@ class Usuario:
 
     """
 
-    def __init__(self, nombre, tipo, cantidad=0):
-        self._id_usuario = f'U{str(cantidad + 1).zfill(3)}'
+    def __init__(self, nombre, tipo, id_usuario=None, cantidad=0):
+        if id_usuario is not None:
+            self._id_usuario = id_usuario
+        else:
+            self._id_usuario = f'U{str(cantidad + 1).zfill(3)}'
         self._nombre = nombre
         self._tipo = tipo
 
@@ -43,12 +46,15 @@ class Libro:
     cantidad (int): Cantidad de libros creados
     """
 
-    def __init__(self, titulo, autor, anio, cantidad=0):
-        self._id_libro = f'L{str(cantidad + 1).zfill(3)}'
+    def __init__(self, titulo, autor, anio, id_libro=None, disponible=True, cantidad=0):
+        if id_libro is not None:
+            self._id_libro = id_libro
+        else:
+            self._id_libro = f'L{str(cantidad + 1).zfill(3)}'
         self._titulo = titulo
         self._autor = autor
         self._anio = anio
-        self._disponible = True
+        self._disponible = disponible
 
     @property
     def id_libro(self):
@@ -89,13 +95,23 @@ class Prestamo:
     cantidad (int): Cantidad de libros creados
     """
 
-    def __init__(self, id_libro, id_usuario, cantidad=0):
-        self._id_prestamo = f'P{str(cantidad + 1).zfill(3)}'
+    def __init__(self, id_libro, id_usuario, id_prestamo=None, fecha_inicio=None, fecha_fin=None, devuelto=False,
+                 cantidad=0):
+        if id_prestamo is not None:
+            self._id_prestamo = id_prestamo
+        else:
+            self._id_prestamo = f'P{str(cantidad + 1).zfill(3)}'
         self._id_libro = id_libro
         self._id_usuario = id_usuario
-        self._fecha_inicio = datetime.now()
-        self._fecha_fin = None
-        self._devuelto = False
+        if fecha_inicio is not None:
+            self._fecha_inicio = fecha_inicio
+        else:
+            self._fecha_inicio = datetime.now()
+        if fecha_fin is not None:
+            self._fecha_fin = fecha_fin
+        else:
+            self._fecha_fin = None
+        self._devuelto = devuelto
 
     @property
     def id_prestamo(self):
@@ -104,6 +120,10 @@ class Prestamo:
     @property
     def id_libro(self):
         return self._id_libro
+
+    @property
+    def devuelto(self):
+        return self._devuelto
 
     def marcar_devuelto(self):
         """
@@ -143,6 +163,18 @@ class Biblioteca:
             prestamos = []
         self._prestamos = prestamos
 
+    @property
+    def libros(self):
+        return self._libros
+
+    @property
+    def usuarios(self):
+        return self._usuarios
+
+    @property
+    def prestamos(self):
+        return self._prestamos
+
     def registrar_libro(self, titulo, autor, anio):
         """
         Se reguistra el libro
@@ -152,7 +184,7 @@ class Biblioteca:
         autor (str): Nombre del autor
         anio (int): Año de salida
         """
-        libro = Libro(titulo, autor, anio, len(self._libros))
+        libro = Libro(titulo, autor, anio, None, True, len(self._libros))
 
         self._libros.append(libro)
         return libro
@@ -165,7 +197,7 @@ class Biblioteca:
         nombre (str): Nombre del usuario
         tipo (str): Tipo de usuario
         """
-        usuario = Usuario(nombre, tipo, len(self._usuarios))
+        usuario = Usuario(nombre, tipo, None, len(self._usuarios))
 
         self._usuarios.append(usuario)
         return usuario
@@ -234,6 +266,3 @@ class Biblioteca:
         for indx, p in enumerate(self._prestamos):
             print(f'{indx + 1}. {p}')
         return self._prestamos
-
-    def to_dict(self):
-        return
