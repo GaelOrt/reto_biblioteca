@@ -73,8 +73,7 @@ class EstrategiaPickle(EstrategiaPersistencia):
          """
         try:
             with open("biblioteca.pkl", "wb") as f:
-                # pickle.dump(biblioteca, f, cls=MiEncoder)
-                pass
+                pickle.dump(biblioteca, f)
 
         except FileNotFoundError:
             print("El archivo no existe.")
@@ -88,8 +87,8 @@ class EstrategiaPickle(EstrategiaPersistencia):
          """
         try:
             with open("biblioteca.pkl", "rb") as f:
-                # diccionario = pickle.load(f, object_hook=decodificar_biblioteca)
-                pass
+                biblio = pickle.load(f)
+                return biblio
 
             # return diccionario
         except FileNotFoundError:
