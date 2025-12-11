@@ -1,5 +1,6 @@
 import json
 import pickle
+from datetime import datetime
 from abc import ABC, abstractmethod
 from .modelos import *
 
@@ -90,7 +91,6 @@ class EstrategiaPickle(EstrategiaPersistencia):
                 biblio = pickle.load(f)
                 return biblio
 
-            # return diccionario
         except FileNotFoundError:
             print("El archivo no existe.")
 
@@ -102,10 +102,6 @@ class EstrategiaPickle(EstrategiaPersistencia):
 
         except EOFError:
             print("Archivo incompleto o vacio.")
-
-
-import json
-from datetime import datetime
 
 
 # Codificador
@@ -149,25 +145,3 @@ def decodificar_biblioteca(dic):
         return Biblioteca(dic['_libros'], dic['_usuarios'], dic['_prestamos'])
 
     return dic
-
-
-if __name__ == '__main__':
-    b = Biblioteca(['asa'], ["asa"], ["aaa"])
-    e = EstrategiaJSON()
-    # e.guardar(b)
-
-    l, u, p = e.cargar()
-
-    print(l)
-    print(u)
-    print(p)
-
-    e2 = EstrategiaPickle()
-
-    # e2.guardar(b)
-
-    l2, u2, p2 = e.cargar()
-
-    print(l2)
-    print(u2)
-    print(p2)

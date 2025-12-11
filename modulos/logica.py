@@ -6,7 +6,7 @@ from .persistencia import *
 
 def obtener_biblioteca():
     """
-    Función para la carga de al biblioteca.
+    Función para la carga de la biblioteca.
     """
     json_file = Path().cwd() / 'biblioteca.json'
     pickle_file = Path().cwd() / 'biblioteca.pkl'
